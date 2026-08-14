@@ -1,0 +1,13 @@
+.task-panel { overflow: hidden; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); }
+.table-header, .task-row { display: grid; grid-template-columns: 35px minmax(180px, 2fr) 105px 100px 100px 30px; align-items: center; gap: 10px; }
+.table-header { padding: 15px 18px; border-bottom: 1px solid var(--border); color: #9aa8ac; font-size: 11px; }
+.task-row { min-height: 62px; padding: 15px 18px; border-bottom: 1px solid #edf0f1; }
+.task-row > input { width: 17px; height: 17px; accent-color: var(--mint-dark); cursor: pointer; }
+.task-row label { color: #27484e; font-size: 13px; font-weight: 500; cursor: pointer; }
+.task-row label.completed { color: #94a3a8; text-decoration: line-through; }
+.category { width: fit-content; padding: 5px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.backend { background: #e3f7f3; color: #087f75; } .frontend { background: #eaf1ff; color: #3868c9; } .devops { background: #f1e9ff; color: #8450b8; } .docs { background: #e8f6ec; color: #347e52; }
+.priority { display: flex; align-items: center; gap: 7px; color: #647a80; font-size: 12px; } .dot { width: 8px; height: 8px; border-radius: 50%; } .high { background: #ef4444; } .medium { background: #f59e0b; } .low { background: #22a55a; }
+.date { color: #73878c; font-size: 12px; }.delete { border: 0; background: transparent; color: #71848a; font-size: 22px; cursor: pointer; }.delete:hover { color: #e76f51; }
+.empty-state { display: grid; place-items: center; min-height: 240px; padding: 20px; color: var(--muted); text-align: center; }.empty-state span { font-size: 32px; color: var(--mint); }.empty-state strong { color: var(--ink); }.empty-state p { margin: 0; font-size: 13px; }.list-footer { padding: 14px; color: #9aa8ac; font-size: 11px; text-align: center; }
+@media (max-width: 760px) { .table-header { display: none; } .task-row { grid-template-columns: 28px 1fr 30px; gap: 8px; }.task-row .category, .task-row .priority, .task-row .date { grid-column: 2; }.task-row .category, .task-row .priority, .task-row .date { display: inline-flex; width: fit-content; }.task-row .delete { grid-column: 3; grid-row: 1; } }

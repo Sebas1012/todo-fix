@@ -1,0 +1,73 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="/tasks" aria-label="Iris CF tasks home">
+      <img src="https://empresas.iris.com.co/login/assets/img/logos/Logo-Iris.svg" width="158" height="64" alt="Iris CF" />
+    </a>
+    <div class="mobile-topbar-controls">
+      <button class="mobile-add-task" type="button" (click)="isFormOpen.update((open) => !open)">Crear tarea</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Main navigation">
+      <nav>
+        <a class="nav-item active" href="/tasks"><app-icon name="grid" />Dashboard</a>
+        <a class="nav-item" href="/tasks"><app-icon name="check-circle" />My tasks</a>
+        <a class="nav-item" href="/tasks"><app-icon name="calendar" />Calendar</a>
+        <a class="nav-item" href="/tasks"><app-icon name="chart" />Reports</a>
+        <a class="nav-item" href="/tasks"><app-icon name="settings" />Settings</a>
+      </nav>
+
+      <section class="motivation" aria-label="Progress motivation">
+        <div class="rocket">➤</div>
+        <strong>Keep going!</strong>
+        <p>You're making progress.</p>
+        <div class="progress-bar"><span [style.width.%]="progress()"></span></div>
+        <small>{{ progress() }}% completed</small>
+      </section>
+
+      <div class="user-card"><span class="avatar">IR</span><div><strong>Iris Dev</strong><small>iris.dev@example.com</small></div></div>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div><h1>To do list</h1><p>Organize, prioritize and get things done.</p></div>
+        <div class="header-actions">
+          <div class="search-box"><label class="sr-only" for="search-tasks">Search tasks</label><app-icon name="search" /><input id="search-tasks" placeholder="Search tasks..." [value]="filters().search" (input)="updateFilters({ ...filters(), search: $any($event.target).value })" /><kbd></kbd></div>
+          <button class="add-task-button" type="button" (click)="isFormOpen.update((open) => !open)"><span></span> Add task</button>
+        </div>
+      </header>
+
+      @if (isFormOpen()) { <div class="form-panel"><app-task-form (taskCreated)="addTask($event)" /></div> }
+      <app-task-metrics [total]="tasks().length" [completed]="completed()" [pending]="pending()" [progress]="progress()" />
+      <app-task-filters (filtersChanged)="updateFilters($event)" />
+
+      <div class="workspace">
+        <app-task-list [tasks]="filteredTasks()" (taskToggled)="toggleTask($event)" (taskDeleted)="deleteTask($event)" />
+        <aside class="right-column">
+          <section class="side-card">
+            <h2><app-icon name="target" /> Today's focus</h2>
+            <strong class="focus-count">{{ pending() }} tasks pending</strong>
+            <p>Stay focused on what matters most.</p>
+            <div class="focus-line"><i class="purple"></i><span>Plan your next task</span><small>Today</small></div>
+            <div class="focus-line"><i class="blue"></i><span>Keep making progress</span><small>Today</small></div>
+          </section>
+          <section class="side-card">
+            <h2><app-icon name="folder" /> Categories</h2>
+            @for (item of categorySummary(); track item.label) {
+              <button class="category-count" type="button" (click)="setCategory(item.label)"><span><i [class]="'category-dot ' + item.label.toLowerCase()"></i>{{ item.label }}</span><strong>{{ item.count }}</strong></button>
+            }
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+    <a class="active" href="/tasks"><app-icon name="grid" /><span>Dashboard</span></a>
+    <a href="/tasks"><app-icon name="check-circle" /><span>My tasks</span></a>
+    <a href="/tasks"><app-icon name="calendar" /><span>Calendar</span></a>
+    <a href="/tasks"><app-icon name="chart" /><span>Reports</span></a>
+    <a href="/tasks"><app-icon name="settings" /><span>Settings</span></a>
+  </nav>
+</div>

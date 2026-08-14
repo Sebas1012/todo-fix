@@ -1,0 +1,11 @@
+:host { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.metric-card { min-height: 120px; padding: 20px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); }
+.metric-card div { display: grid; gap: 5px; }
+.metric-label, .metric-card small { color: var(--muted); font-size: 13px; }
+.metric-card strong { color: var(--ink); font-size: 28px; line-height: 1; }
+.metric-card small { color: #98a7aa; font-size: 12px; }
+.metric-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; background: var(--mint-soft); color: var(--mint-dark); }
+.progress-ring { width: 61px; height: 61px; display: grid; place-items: center; border-radius: 50%; background: conic-gradient(var(--mint) 0deg var(--progress), #dff3f0 var(--progress) 360deg); }
+.progress-ring span { width: 38px; height: 38px; border-radius: 50%; background: var(--surface); }
+@media (max-width: 900px) { :host { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { :host { grid-template-columns: 1fr; } }

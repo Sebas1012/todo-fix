@@ -15,7 +15,8 @@
   min-height: 0;
   flex: 1 1 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 240px));
+  justify-content: start;
   gap: 12px;
   overflow-x: hidden;
   overflow-y: auto;
@@ -27,7 +28,7 @@
 .task-card {
   position: relative;
   display: flex;
-  width: 100%;
+  width: 240px;
   min-height: 190px;
   padding: 12px;
   flex-direction: column;
@@ -45,6 +46,8 @@
   box-shadow: 0 7px 16px rgba(39, 72, 78, .08);
   transform: translateY(-1px);
 }
+.task-card.updating { cursor: wait; opacity: .78; }
+.task-card.updating:hover { transform: none; }
 
 .task-card.completed { background: #fbfdfc; }
 .task-card-top { display: block; min-height: 58px; }
@@ -55,6 +58,8 @@
 .task-check span app-icon { width: 23px; height: 23px; opacity: 1; transform: scale(1); transition: color .15s ease, transform .15s ease; }
 .task-check input:checked + span { border-color: #19a673; background: #19a673; color: #fff; box-shadow: 0 3px 8px rgba(25, 166, 115, .22); }
 .task-check input:checked + span app-icon { opacity: 1; transform: scale(1); }
+.task-check input:disabled + span { cursor: wait; }
+.task-check span app-spinner { color: currentColor; }
 .task-check input:focus-visible + span { outline: 3px solid rgba(25, 166, 115, .2); outline-offset: 2px; }
 
 .task-menu { position: absolute; top: 12px; right: 12px; z-index: 1; display: grid; width: 25px; height: 25px; padding: 0; border: 0; border-radius: 7px; background: transparent; color: #91a2a5; cursor: pointer; place-items: center; }
@@ -89,7 +94,7 @@
 .list-footer { padding: 8px; color: #9aa8ac; font-size: 10px; text-align: center; }
 
 @media (max-width: 1100px) {
-  .task-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .task-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 240px)); }
 }
 
 @media (max-width: 760px) {

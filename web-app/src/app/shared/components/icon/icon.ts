@@ -19,7 +19,8 @@ export type IconName =
   | 'file'
   | 'check'
   | 'alert-circle'
-  | 'alert-triangle';
+  | 'alert-triangle'
+  | 'logout';
 
 @Component({
   selector: 'app-icon',

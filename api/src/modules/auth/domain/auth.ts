@@ -1,12 +1,14 @@
 export type User = {
   id: string;
-  username: string;
+  fullName: string;
+  email: string;
   passwordHash: string;
 };
 
 export interface UserRepository {
-  findByUsername(username: string): Promise<User | null>;
-  create(input: { username: string; passwordHash: string }): Promise<User>;
+  findByEmail(email: string): Promise<User | null>;
+  findById(id: string): Promise<User | null>;
+  create(input: { fullName: string; email: string; passwordHash: string }): Promise<User>;
 }
 
 export interface PasswordHasher {

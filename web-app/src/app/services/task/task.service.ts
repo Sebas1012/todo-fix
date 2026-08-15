@@ -13,6 +13,7 @@ export class TaskService {
   private readonly tasksState = signal<readonly Task[]>([]);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
+  readonly togglingTaskIds = signal<ReadonlySet<string>>(new Set());
   readonly tasks = this.tasksState.asReadonly();
 
   async loadTasks(): Promise<void> {
@@ -35,13 +36,18 @@ export class TaskService {
 
   async toggleTask(id: string): Promise<void> {
     const task = this.tasksState().find((item) => item.id === id);
-    if (!task) return;
+    if (!task || this.togglingTaskIds().has(id)) return;
 
-    const succeeded = await this.run(async () => {
-      const response = await firstValueFrom(this.taskApi.updateTask(id, { completed: !task.completed }));
-      this.tasksState.update((tasks) => tasks.map((item) => item.id === id ? mapTaskDto(response.data) : item));
-    });
-    if (succeeded) this.alertService.success('El estado de la tarea fue actualizado.', 'Tarea actualizada');
+    this.setToggling(id, true);
+    try {
+      const succeeded = await this.run(async () => {
+        const response = await firstValueFrom(this.taskApi.updateTask(id, { completed: !task.completed }));
+        this.tasksState.update((tasks) => tasks.map((item) => item.id === id ? mapTaskDto(response.data) : item));
+      });
+      if (succeeded) this.alertService.success('El estado de la tarea fue actualizado.', 'Tarea actualizada');
+    } finally {
+      this.setToggling(id, false);
+    }
   }
 
   async deleteTask(id: string): Promise<void> {
@@ -84,5 +90,13 @@ export class TaskService {
     if (!payload || typeof payload !== 'object' || !('message' in payload)) return null;
     const message = payload.message;
     return typeof message === 'string' ? message : null;
+  }
+
+  private setToggling(id: string, value: boolean): void {
+    this.togglingTaskIds.update((ids) => {
+      const next = new Set(ids);
+      if (value) next.add(id); else next.delete(id);
+      return next;
+    });
   }
 }

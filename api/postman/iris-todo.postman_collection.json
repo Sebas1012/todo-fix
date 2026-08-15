@@ -14,7 +14,7 @@
       "request": {
         "method": "POST",
         "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": { "mode": "raw", "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"change-me\"\n}" },
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"dev@example.com\",\n  \"password\": \"change-me\"\n}" },
         "url": "{{baseUrl}}/api/auth/login"
       }
     },

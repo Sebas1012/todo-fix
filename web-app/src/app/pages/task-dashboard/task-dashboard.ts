@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { TaskCategory, TaskSort, TaskStatus } from '../../models/task/task.model';
 import { TaskService } from '../../services/task/task.service';
 import { TaskFiltersComponent, TaskFilterState } from './task-filters/task-filters';
@@ -7,6 +8,7 @@ import { TaskListComponent } from './task-list/task-list';
 import { TaskMetricsComponent } from './task-metrics/task-metrics';
 import { IconComponent } from '../../shared/components/icon/icon';
 import { NavbarComponent } from '../../shared/components/navbar/navbar';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-task-dashboard',
@@ -18,11 +20,16 @@ import { NavbarComponent } from '../../shared/components/navbar/navbar';
 })
 export class TaskDashboard implements OnInit {
   private readonly taskService = inject(TaskService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
   readonly isFormOpen = signal(false);
   readonly filters = signal<TaskFilterState>({ category: 'All', status: 'Todos', search: '', sort: 'Fecha de creación' });
   readonly tasks = this.taskService.tasks;
   readonly loading = this.taskService.loading;
+  readonly togglingTaskIds = this.taskService.togglingTaskIds;
   readonly error = this.taskService.error;
+  readonly currentUser = this.authService.currentUser;
+  readonly userInitials = computed(() => this.currentUser()?.fullName.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase() ?? 'IR');
   readonly completed = computed(() => this.tasks().filter((task) => task.completed).length);
   readonly pending = computed(() => this.tasks().length - this.completed());
   readonly progress = computed(() => this.tasks().length ? Math.round((this.completed() / this.tasks().length) * 100) : 0);
@@ -50,6 +57,7 @@ export class TaskDashboard implements OnInit {
   addTask(input: Parameters<TaskService['addTask']>[0]): void { void this.taskService.addTask(input); }
   toggleTask(id: string): void { void this.taskService.toggleTask(id); }
   deleteTask(id: string): void { void this.taskService.deleteTask(id); }
+  async logout(): Promise<void> { await this.authService.logout(); await this.router.navigateByUrl('/login'); }
   updateFilters(next: TaskFilterState): void { this.filters.set(next); }
 
   setStatus(status: TaskStatus): void { this.updateFilters({ ...this.filters(), status }); }

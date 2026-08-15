@@ -16,7 +16,7 @@ Configura `DATABASE_URL` en `.env` con una URI de MongoDB Atlas. Nunca subas ese
 
 ## Endpoints
 
-Todos los endpoints de tareas requieren `Authorization: Bearer <token>` en producción. Para desarrollo local puede habilitarse temporalmente `DEV_AUTH_BYPASS=true`; nunca debe activarse en producción.
+Los endpoints protegidos requieren la cookie `iris_auth` emitida por el API después del login o registro. La cookie es `HttpOnly` y el frontend debe enviar las peticiones con credenciales.
 
 Las tareas contienen `title`, `category`, `priority`, `completed`, `createdAt` y `updatedAt`. Las categorías válidas son `FrontEnd`, `BackEnd` y `Docs`; las prioridades son `Baja`, `Media` y `Urgente`.
 

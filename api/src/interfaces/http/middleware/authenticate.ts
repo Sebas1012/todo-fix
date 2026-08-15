@@ -1,20 +1,15 @@
 import type { RequestHandler } from 'express';
-import { env } from '../../../config/env.js';
 import { AppError } from '../../../shared/errors.js';
 import type { TokenService } from '../../../modules/auth/domain/auth.js';
+import { readAuthCookie } from '../../../modules/auth/interfaces/cookie.js';
 
 declare global {
   namespace Express { interface Request { userId?: string; } }
 }
 
-export const authenticate = (tokens: TokenService, ensureDevUser: () => Promise<string>): RequestHandler => (req, _res, next) => {
-  if (env.NODE_ENV === 'development' && env.DEV_AUTH_BYPASS) {
-    ensureDevUser().then((userId) => { req.userId = userId; next(); }).catch(next);
-    return;
-  }
-
+export const authenticate = (tokens: TokenService): RequestHandler => (req, _res, next) => {
   try {
-    const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
+    const token = readAuthCookie(req);
     if (!token) throw new AppError(401, 'Authentication required');
     req.userId = tokens.verify(token);
     next();

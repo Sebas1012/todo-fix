@@ -5,20 +5,25 @@
         <article
           class="task-card"
           [class.completed]="task.completed"
+          [class.updating]="togglingTaskIds().has(task.id)"
           role="button"
           tabindex="0"
           [attr.aria-pressed]="task.completed"
+          [attr.aria-busy]="togglingTaskIds().has(task.id)"
           (click)="toggleFromCard($event, task.id)"
           (keydown)="toggleFromKeyboard($event, task.id)"
         >
           <div class="task-card-top">
-            <label class="task-check" [attr.aria-label]="'Marcar como ' + (task.completed ? 'pendiente' : 'completada')">
+            <label class="task-check" [attr.aria-label]="togglingTaskIds().has(task.id) ? 'Actualizando tarea' : 'Marcar como ' + (task.completed ? 'pendiente' : 'completada')">
               <input
                 type="checkbox"
                 [checked]="task.completed"
-                (change)="taskToggled.emit(task.id)"
+                [disabled]="togglingTaskIds().has(task.id)"
+                (change)="toggleFromCheckbox(task.id)"
               />
-              <span aria-hidden="true"><app-icon name="check" /></span>
+              <span aria-hidden="true">
+                @if (togglingTaskIds().has(task.id)) { <app-spinner /> } @else { <app-icon name="check" /> }
+              </span>
             </label>
             <div [class]="'category-icon ' + task.category.toLowerCase()">
               <app-icon [name]="categoryIcons[task.category]" />

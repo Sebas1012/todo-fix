@@ -2,9 +2,11 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
+import type { RegisterCredentials } from '../../models/auth/auth.model';
 
 type RegisterForm = FormGroup<{
-  username: FormControl<string>;
+  fullName: FormControl<string>;
+  email: FormControl<string>;
   password: FormControl<string>;
   confirmPassword: FormControl<string>;
 }>;
@@ -24,7 +26,8 @@ export class RegisterPage {
   readonly showPassword = signal(false);
   readonly showConfirmPassword = signal(false);
   readonly form: RegisterForm = new FormGroup({
-    username: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(3)] }),
+    fullName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2)] }),
+    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8)] }),
     confirmPassword: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
@@ -36,8 +39,9 @@ export class RegisterPage {
     this.form.markAllAsTouched();
     if (this.form.invalid || this.form.controls.password.value !== this.form.controls.confirmPassword.value) return;
 
-    const { username, password } = this.form.getRawValue();
-    const registered = await this.authService.register({ username, password });
+    const { fullName, email, password } = this.form.getRawValue();
+    const credentials: RegisterCredentials = { fullName, email, password };
+    const registered = await this.authService.register(credentials);
     if (registered) await this.router.navigateByUrl('/tasks');
   }
 }

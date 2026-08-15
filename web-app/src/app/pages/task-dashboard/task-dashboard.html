@@ -20,7 +20,11 @@
         <small>{{ progress() }}% completado</small>
       </section>
 
-      <div class="user-card"><span class="avatar">IR</span><div><strong>Iris Dev</strong><small>iris.dev@example.com</small></div></div>
+      <div class="user-card">
+        <span class="avatar">{{ userInitials() }}</span>
+        <div><strong>{{ currentUser()?.fullName ?? 'Usuario' }}</strong><small>{{ currentUser()?.email ?? '' }}</small></div>
+        <button class="logout-button" type="button" aria-label="Cerrar sesión" title="Cerrar sesión" (click)="logout()"><app-icon name="logout" /></button>
+      </div>
     </aside>
 
     <main class="main-content">
@@ -62,7 +66,7 @@
         <app-task-metrics [total]="tasks().length" [completed]="completed()" [pending]="pending()" [progress]="progress()" />
         <app-task-filters (filtersChanged)="updateFilters($event)" />
         <div class="workspace">
-          <app-task-list [tasks]="filteredTasks()" (taskToggled)="toggleTask($event)" />
+          <app-task-list [tasks]="filteredTasks()" [togglingTaskIds]="togglingTaskIds()" (taskToggled)="toggleTask($event)" />
           <aside class="right-column">
             <section class="side-card">
               <h2><app-icon name="target" /> Enfoque de hoy</h2>

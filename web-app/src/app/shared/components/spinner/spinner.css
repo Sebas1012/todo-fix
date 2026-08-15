@@ -1,0 +1,4 @@
+:host { display: inline-grid; width: 23px; height: 23px; place-items: center; }
+.spinner { width: 18px; height: 18px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spinner-rotate .7s linear infinite; }
+@keyframes spinner-rotate { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }

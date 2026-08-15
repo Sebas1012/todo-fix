@@ -7,9 +7,6 @@ const schema = z.object({
   DATABASE_URL: z.string().min(1),
   JWT_SECRET: z.string().min(16),
   JWT_EXPIRES_IN: z.string().default('15m'),
-  AUTH_USERNAME: z.string().min(1),
-  AUTH_PASSWORD: z.string().min(1),
-  DEV_AUTH_BYPASS: z.coerce.boolean().default(false),
   CORS_ORIGIN: z.string().default('http://localhost:4200'),
 });
 

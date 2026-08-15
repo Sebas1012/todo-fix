@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 
 type LoginForm = FormGroup<{
-  username: FormControl<string>;
+  email: FormControl<string>;
   password: FormControl<string>;
 }>;
 
@@ -22,7 +22,7 @@ export class LoginPage {
   readonly loading = this.authService.loading;
   readonly showPassword = signal(false);
   readonly form: LoginForm = new FormGroup({
-    username: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     password: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
 

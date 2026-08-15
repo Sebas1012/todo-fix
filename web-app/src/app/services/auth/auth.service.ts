@@ -1,28 +1,24 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { isPlatformBrowser } from '@angular/common';
-import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AlertService } from '../../shared/services/alert.service';
-import type { LoginCredentials } from '../../models/auth/auth.model';
+import type { AuthUser, LoginCredentials, RegisterCredentials } from '../../models/auth/auth.model';
 import { AuthApiService } from './auth-api.service';
-
-const TOKEN_KEY = 'iris.auth.token';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly authApi = inject(AuthApiService);
   private readonly alertService = inject(AlertService);
-  private readonly platformId = inject(PLATFORM_ID);
-  private readonly tokenState = signal<string | null>(this.readToken());
-  readonly token = this.tokenState.asReadonly();
-  readonly isAuthenticated = computed(() => Boolean(this.tokenState()));
+  private readonly userState = signal<AuthUser | null>(null);
+  readonly currentUser = this.userState.asReadonly();
+  readonly isAuthenticated = computed(() => Boolean(this.userState()));
   readonly loading = signal(false);
 
   async login(credentials: LoginCredentials): Promise<boolean> {
     this.loading.set(true);
     try {
       const response = await firstValueFrom(this.authApi.login(credentials));
-      this.storeToken(response.data.token);
+      this.storeSession(response.data.user);
       this.alertService.success('Tu sesión fue iniciada correctamente.', 'Bienvenido(a)');
       return true;
     } catch (error: unknown) {
@@ -33,11 +29,11 @@ export class AuthService {
     }
   }
 
-  async register(credentials: LoginCredentials): Promise<boolean> {
+  async register(credentials: RegisterCredentials): Promise<boolean> {
     this.loading.set(true);
     try {
       const response = await firstValueFrom(this.authApi.register(credentials));
-      this.storeToken(response.data.token);
+      this.storeSession(response.data.user);
       this.alertService.success('Tu cuenta fue creada correctamente.', 'Registro exitoso');
       return true;
     } catch (error: unknown) {
@@ -48,28 +44,35 @@ export class AuthService {
     }
   }
 
-  logout(): void {
-    this.clearToken();
+  async restoreSession(): Promise<boolean> {
+    if (this.userState()) return true;
+    try {
+      const response = await firstValueFrom(this.authApi.me());
+      this.userState.set(response.data.user);
+      return true;
+    } catch {
+      this.clearSession();
+      return false;
+    }
   }
 
-  private storeToken(token: string): void {
-    if (isPlatformBrowser(this.platformId)) localStorage.setItem(TOKEN_KEY, token);
-    this.tokenState.set(token);
+  async logout(): Promise<void> {
+    try { await firstValueFrom(this.authApi.logout()); } catch { /* Always clear local state. */ }
+    this.clearSession();
   }
 
-  private clearToken(): void {
-    if (isPlatformBrowser(this.platformId)) localStorage.removeItem(TOKEN_KEY);
-    this.tokenState.set(null);
+  private storeSession(user: AuthUser): void {
+    this.userState.set(user);
   }
 
-  private readToken(): string | null {
-    return isPlatformBrowser(this.platformId) ? localStorage.getItem(TOKEN_KEY) : null;
+  private clearSession(): void {
+    this.userState.set(null);
   }
 
   private getErrorMessage(error: unknown): string {
     if (error instanceof HttpErrorResponse) {
       if (error.status === 0) return 'No fue posible conectar con el servidor.';
-      if (error.status === 401) return 'El usuario o la contraseña no son correctos.';
+      if (error.status === 401) return 'El correo o la contraseña no son correctos.';
       if (error.status === 400) return 'Completa los datos de acceso.';
       if (error.status >= 500) return 'Ocurrió un error interno en el servidor.';
 

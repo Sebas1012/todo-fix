@@ -1,0 +1,54 @@
+<main class="register-page">
+  <section class="register-brand" aria-label="Iris">
+    <a routerLink="/login" class="brand-lockup" aria-label="Volver al login">
+      <img src="assets/images/iris_logo.png" alt="" />
+      <span>IRIS</span>
+    </a>
+    <div>
+      <strong>Empieza a organizarte.</strong>
+      <p>Crea tu cuenta y lleva tus tareas a otro nivel.</p>
+    </div>
+  </section>
+
+  <section class="register-panel">
+    <div class="register-content">
+      <span class="eyebrow">NUEVA CUENTA</span>
+      <h1>Crear cuenta</h1>
+      <p class="intro">Regístrate para comenzar a gestionar tus tareas.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="field-group" [class.invalid]="form.controls.username.touched && form.controls.username.invalid">
+          <label for="register-username">Usuario</label>
+          <input id="register-username" type="text" formControlName="username" autocomplete="username" placeholder="Elige un usuario" [attr.aria-invalid]="form.controls.username.touched && form.controls.username.invalid" />
+          @if (form.controls.username.touched && form.controls.username.hasError('required')) { <small class="field-error">El usuario es obligatorio.</small> }
+          @if (form.controls.username.touched && form.controls.username.hasError('minlength')) { <small class="field-error">Usa al menos 3 caracteres.</small> }
+        </div>
+
+        <div class="field-group" [class.invalid]="form.controls.password.touched && form.controls.password.invalid">
+          <label for="register-password">Contraseña</label>
+          <div class="password-field">
+            <input id="register-password" [type]="showPassword() ? 'text' : 'password'" formControlName="password" autocomplete="new-password" placeholder="Crea una contraseña" [attr.aria-invalid]="form.controls.password.touched && form.controls.password.invalid" />
+            <button type="button" [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'" (click)="togglePassword()">{{ showPassword() ? 'Ocultar' : 'Mostrar' }}</button>
+          </div>
+          @if (form.controls.password.touched && form.controls.password.hasError('required')) { <small class="field-error">La contraseña es obligatoria.</small> }
+          @if (form.controls.password.touched && form.controls.password.hasError('minlength')) { <small class="field-error">Usa al menos 8 caracteres.</small> }
+        </div>
+
+        <div class="field-group" [class.invalid]="form.controls.confirmPassword.touched && (form.controls.confirmPassword.invalid || form.controls.password.value !== form.controls.confirmPassword.value)">
+          <label for="register-confirm-password">Confirmar contraseña</label>
+          <div class="password-field">
+            <input id="register-confirm-password" [type]="showConfirmPassword() ? 'text' : 'password'" formControlName="confirmPassword" autocomplete="new-password" placeholder="Repite tu contraseña" />
+            <button type="button" [attr.aria-label]="showConfirmPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'" (click)="toggleConfirmPassword()">{{ showConfirmPassword() ? 'Ocultar' : 'Mostrar' }}</button>
+          </div>
+          @if (form.controls.confirmPassword.touched && form.controls.confirmPassword.hasError('required')) { <small class="field-error">Confirma tu contraseña.</small> }
+          @if (form.controls.confirmPassword.touched && form.controls.password.value !== form.controls.confirmPassword.value) { <small class="field-error">Las contraseñas no coinciden.</small> }
+        </div>
+
+        <button class="submit-button" type="submit" [disabled]="loading()">
+          @if (loading()) { <span class="spinner" aria-hidden="true"></span> Creando cuenta... } @else { Registrarse }
+        </button>
+        <p class="login-prompt">¿Ya tienes una cuenta? <a routerLink="/login">Iniciar sesión</a></p>
+      </form>
+    </div>
+  </section>
+</main>

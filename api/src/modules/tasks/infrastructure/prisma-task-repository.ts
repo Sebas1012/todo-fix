@@ -1,6 +1,6 @@
 import type { Task as PrismaTask } from '@prisma/client';
-import { prisma } from './prisma.js';
-import type { Task, TaskCategory, TaskPriority, TaskRepository } from '../domain/tasks/task.js';
+import { prisma } from '../../../infrastructure/prisma.js';
+import type { Task, TaskCategory, TaskPriority, TaskRepository } from '../domain/task.js';
 
 const categories = new Set<TaskCategory>(['FrontEnd', 'BackEnd', 'Docs']);
 const priorities = new Set<TaskPriority>(['Baja', 'Media', 'Urgente']);
@@ -10,12 +10,12 @@ const mapPriority = (value: unknown): TaskPriority => typeof value === 'string' 
 const mapTask = (task: PrismaTask): Task => ({ ...task, category: mapCategory(task.category), priority: mapPriority(task.priority) });
 
 export class PrismaTaskRepository implements TaskRepository {
-  async create(input: { title: string; category: Task['category']; priority: Task['priority']; completed?: boolean }): Promise<Task> {
-    return mapTask(await prisma.task.create({ data: { title: input.title, category: input.category, priority: input.priority, completed: input.completed ?? false } }));
+  async create(userId: string, input: { title: string; category: Task['category']; priority: Task['priority']; completed?: boolean }): Promise<Task> {
+    return mapTask(await prisma.task.create({ data: { userId, title: input.title, category: input.category, priority: input.priority, completed: input.completed ?? false } }));
   }
 
-  async findMany(input: { completed?: boolean; skip: number; take: number }) {
-    const where = input.completed === undefined ? {} : { completed: input.completed };
+  async findMany(userId: string, input: { completed?: boolean; skip: number; take: number }) {
+    const where = { userId, ...(input.completed === undefined ? {} : { completed: input.completed }) };
     const [items, total] = await Promise.all([
       prisma.task.findMany({ where, skip: input.skip, take: input.take, orderBy: { createdAt: 'desc' } }),
       prisma.task.count({ where }),
@@ -23,22 +23,25 @@ export class PrismaTaskRepository implements TaskRepository {
     return { items: items.map(mapTask), total };
   }
 
-  async findById(id: string) {
-    const task = await prisma.task.findUnique({ where: { id } });
+  async findById(userId: string, id: string) {
+    const task = await prisma.task.findFirst({ where: { id, userId } });
     return task ? mapTask(task) : null;
   }
 
-  async update(id: string, input: { title?: string; completed?: boolean }) {
+  async update(userId: string, id: string, input: { title?: string; category?: Task['category']; priority?: Task['priority']; completed?: boolean }) {
     try {
-      return mapTask(await prisma.task.update({ where: { id }, data: input }));
+      const task = await prisma.task.findFirst({ where: { id, userId } });
+      return task ? mapTask(await prisma.task.update({ where: { id }, data: input })) : null;
     } catch (error) {
       if (error instanceof Error && error.name === 'PrismaClientKnownRequestError') return null;
       throw error;
     }
   }
 
-  async delete(id: string) {
+  async delete(userId: string, id: string) {
     try {
+      const task = await prisma.task.findFirst({ where: { id, userId } });
+      if (!task) return false;
       await prisma.task.delete({ where: { id } });
       return true;
     } catch (error) {

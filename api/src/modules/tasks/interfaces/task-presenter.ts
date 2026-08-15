@@ -1,4 +1,4 @@
-import type { Task } from '../domain/tasks/task.js';
+import type { Task } from '../domain/task.js';
 
 const colombiaDate = (value: Date): string => {
   const parts = new Intl.DateTimeFormat('en-CA', {

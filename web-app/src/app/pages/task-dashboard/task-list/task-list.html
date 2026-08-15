@@ -1,0 +1,53 @@
+<section class="task-panel" aria-label="Lista de tareas">
+  @if (tasks().length) {
+    <div class="task-grid">
+      @for (task of tasks(); track task.id) {
+        <article
+          class="task-card"
+          [class.completed]="task.completed"
+          role="button"
+          tabindex="0"
+          [attr.aria-pressed]="task.completed"
+          (click)="toggleFromCard($event, task.id)"
+          (keydown)="toggleFromKeyboard($event, task.id)"
+        >
+          <div class="task-card-top">
+            <label class="task-check" [attr.aria-label]="'Marcar como ' + (task.completed ? 'pendiente' : 'completada')">
+              <input
+                type="checkbox"
+                [checked]="task.completed"
+                (change)="taskToggled.emit(task.id)"
+              />
+              <span aria-hidden="true"><app-icon name="check" /></span>
+            </label>
+            <div [class]="'category-icon ' + task.category.toLowerCase()">
+              <app-icon [name]="categoryIcons[task.category]" />
+            </div>
+            <button class="task-menu" type="button" aria-label="Más opciones">
+              <app-icon name="more" />
+            </button>
+          </div>
+
+          <span class="category" [class]="'category ' + task.category.toLowerCase()">{{ task.category }}</span>
+          <h2 class="task-title">{{ task.title }}</h2>
+
+          <div class="task-meta">
+            <span class="priority">
+              <i [class]="'dot ' + task.priority.toLowerCase()"></i>
+              {{ task.priority }}
+            </span>
+            <time class="date" [attr.datetime]="task.createdAt">{{ task.createdAt }}</time>
+          </div>
+        </article>
+      }
+    </div>
+  } @else {
+    <div class="empty-state">
+      <span aria-hidden="true">☷</span>
+      <strong>No se encontraron tareas</strong>
+      <p>Agrega una tarea o ajusta tus filtros para verla aquí.</p>
+    </div>
+  }
+
+  <div class="list-footer">Mostrando {{ tasks().length }} tarea{{ tasks().length === 1 ? '' : 's' }}</div>
+</section>

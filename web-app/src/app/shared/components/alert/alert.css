@@ -1,0 +1,46 @@
+:host {
+  position: fixed;
+  top: 16px;
+  right: 32px;
+  z-index: 1000;
+  display: block;
+  width: min(390px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.alert-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 14px 14px 16px;
+  border: 1px solid;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(20, 55, 60, .16);
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 280ms ease, transform 280ms ease;
+}
+
+.alert-toast.leaving { opacity: 0; transform: translateX(32px); }
+.alert-icon { display: grid; width: 30px; height: 30px; flex: 0 0 30px; border-radius: 50%; place-items: center; }
+.alert-icon app-icon { width: 18px; height: 18px; }
+.alert-content { min-width: 0; flex: 1; }
+.alert-content strong { display: block; font-size: 13px; }
+.alert-content p { margin: 3px 0 0; font-size: 12px; line-height: 1.4; }
+.alert-toast > button { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: currentColor; cursor: pointer; font-size: 21px; line-height: 1; }
+.alert-toast > button:hover { background: rgba(0, 0, 0, .06); }
+.alert-toast.success { border-color: #a9dfc2; background: #effbf4; color: #176b42; }
+.alert-toast.success .alert-icon { background: #c9f0d9; color: #16834b; }
+.alert-toast.error { border-color: #f0b5b5; background: #fff3f3; color: #9d2929; }
+.alert-toast.error .alert-icon { background: #ffd9d9; color: #d13a3a; }
+.alert-toast.warning { border-color: #efd58f; background: #fff9e8; color: #876316; }
+.alert-toast.warning .alert-icon { background: #ffedb8; color: #b37a0c; }
+
+@media (max-width: 760px) {
+  :host { top: 16px; right: 16px; left: 16px; width: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .alert-toast { transition: none; }
+}

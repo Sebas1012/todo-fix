@@ -1,0 +1,16 @@
+<div class="metric-card">
+  <div><span class="metric-label">Total</span><strong>{{ total() }}</strong><small>Todas tus tareas</small></div>
+  <span class="metric-icon"><app-icon name="list" /></span>
+</div>
+<div class="metric-card">
+  <div><span class="metric-label">Completadas</span><strong>{{ completed() }}</strong><small>{{ progress() }}% completado</small></div>
+  <span class="metric-icon"><app-icon name="check-circle" /></span>
+</div>
+<div class="metric-card">
+  <div><span class="metric-label">Pendientes</span><strong>{{ pending() }}</strong><small> </small></div>
+  <span class="metric-icon"><app-icon name="clock" /></span>
+</div>
+<div class="metric-card progress-card">
+  <div><span class="metric-label">Progreso</span><strong>{{ progress() }}%</strong><small>Progreso general</small></div>
+  <span class="progress-ring" [style.--progress.deg]="progress() * 3.6"><span></span></span>
+</div>

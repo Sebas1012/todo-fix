@@ -1,0 +1,16 @@
+@if (alert(); as current) {
+  <aside
+    class="alert-toast"
+    [class]="'alert-toast ' + current.type"
+    [class.leaving]="leaving()"
+    role="alert"
+    aria-live="polite"
+  >
+    <span class="alert-icon"><app-icon [name]="icons[current.type]" /></span>
+    <div class="alert-content">
+      <strong>{{ current.title }}</strong>
+      <p>{{ current.message }}</p>
+    </div>
+    <button type="button" aria-label="Cerrar alerta" (click)="dismiss()">×</button>
+  </aside>
+}

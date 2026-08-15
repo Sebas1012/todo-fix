@@ -1,0 +1,101 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="/tasks" aria-label="Inicio de tareas Iris CF">
+      <img src="https://empresas.iris.com.co/login/assets/img/logos/Logo-Iris.svg" width="158" height="64" alt="Iris CF" />
+    </a>
+    <div class="mobile-topbar-controls">
+      <button class="mobile-add-task" type="button" (click)="isFormOpen.update((open) => !open)">Crear tarea</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Navegación principal">
+      <app-navbar />
+
+      <section class="motivation" aria-label="Motivación de progreso">
+        <div class="rocket">➤</div>
+        <strong>¡Sigue así!</strong>
+        <p>Estás progresando.</p>
+        <div class="progress-bar"><span [style.width.%]="progress()"></span></div>
+        <small>{{ progress() }}% completado</small>
+      </section>
+
+      <div class="user-card"><span class="avatar">IR</span><div><strong>Iris Dev</strong><small>iris.dev@example.com</small></div></div>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div><h1>Lista de tareas</h1><p>Organiza, prioriza y haz que las cosas se hagan.</p></div>
+        <div class="header-actions">
+          <div class="search-box"><label class="sr-only" for="search-tasks">Buscar tareas</label><app-icon name="search" /><input id="search-tasks" placeholder="Buscar tareas..." [value]="filters().search" (input)="updateFilters({ ...filters(), search: $any($event.target).value })" /><kbd></kbd></div>
+          <button class="add-task-button" type="button" (click)="isFormOpen.update((open) => !open)"><span></span> Crear tarea</button>
+        </div>
+      </header>
+
+      @if (loading()) {
+        <section class="dashboard-loading" role="status" aria-label="Cargando dashboard" aria-busy="true">
+          <div class="loading-metrics">
+            @for (item of [1, 2, 3, 4]; track item) {
+              <div class="loading-metric skeleton"><span></span><strong></strong><small></small></div>
+            }
+          </div>
+          <div class="loading-filters">
+            <span class="loading-filter-status skeleton"></span>
+            <span class="loading-filter-tabs skeleton"></span>
+            <span class="loading-filter-sort skeleton"></span>
+          </div>
+          <div class="loading-workspace">
+            <div class="loading-task-panel">
+              <div class="loading-task-grid">
+                @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+                  <div class="loading-task-card skeleton"><span></span><i></i><strong></strong><small></small></div>
+                }
+              </div>
+            </div>
+            <aside class="loading-sidebar">
+              <div class="loading-side-card skeleton"></div>
+              <div class="loading-side-card skeleton"></div>
+            </aside>
+          </div>
+        </section>
+      } @else {
+        <app-task-metrics [total]="tasks().length" [completed]="completed()" [pending]="pending()" [progress]="progress()" />
+        <app-task-filters (filtersChanged)="updateFilters($event)" />
+        <div class="workspace">
+          <app-task-list [tasks]="filteredTasks()" (taskToggled)="toggleTask($event)" />
+          <aside class="right-column">
+            <section class="side-card">
+              <h2><app-icon name="target" /> Enfoque de hoy</h2>
+              <strong class="focus-count">{{ pending() }} tareas pendientes</strong>
+              <p>Mantente enfocado en lo que más importa.</p>
+              <div class="focus-line"><i class="purple"></i><span>Planea tu próxima tarea</span><small>Hoy</small></div>
+              <div class="focus-line"><i class="blue"></i><span>Sigue avanzando</span><small>Hoy</small></div>
+            </section>
+            <section class="side-card">
+              <h2><app-icon name="folder" /> Categorías</h2>
+              @for (item of categorySummary(); track item.label) {
+                <button class="category-count" type="button" (click)="setCategory(item.label)"><span><i [class]="'category-dot ' + item.label.toLowerCase()"></i>{{ item.label }}</span><strong>{{ item.count }}</strong></button>
+              }
+            </section>
+          </aside>
+        </div>
+      }
+    </main>
+  </div>
+
+  <app-task-create-drawer
+    [open]="isFormOpen()"
+    [tasks]="tasks()"
+    (closed)="isFormOpen.set(false)"
+    (taskCreated)="addTask($event)"
+    (taskDeleted)="deleteTask($event)"
+  />
+
+  <nav class="mobile-bottom-nav" aria-label="Navegación móvil">
+    <a class="active" href="/tasks"><app-icon name="grid" /><span>Panel</span></a>
+    <a href="/tasks"><app-icon name="check-circle" /><span>Mis tareas</span></a>
+    <span class="mobile-nav-disabled" aria-disabled="true"><app-icon name="calendar" /><span>Calendario</span></span>
+    <span class="mobile-nav-disabled" aria-disabled="true"><app-icon name="chart" /><span>Reportes</span></span>
+    <span class="mobile-nav-disabled" aria-disabled="true"><app-icon name="settings" /><span>Configuración</span></span>
+  </nav>
+</div>

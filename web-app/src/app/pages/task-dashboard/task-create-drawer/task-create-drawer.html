@@ -1,0 +1,80 @@
+<div class="drawer-backdrop" [class.is-open]="open()" (click)="close()" aria-hidden="true"></div>
+
+<aside class="task-drawer" [class.is-open]="open()" role="dialog" aria-modal="true" aria-labelledby="task-drawer-title">
+  <div class="drawer-header">
+    <div>
+      <span class="drawer-kicker">Nueva tarea</span>
+      <h2 id="task-drawer-title">Crear tarea</h2>
+    </div>
+    <button class="drawer-close" type="button" aria-label="Cerrar" (click)="close()">×</button>
+  </div>
+
+  <div class="drawer-content">
+    <section class="create-section" aria-labelledby="create-section-title">
+      <h3 id="create-section-title" class="sr-only">Datos de la tarea</h3>
+      <app-task-form (taskCreated)="handleTaskCreated($event)" />
+    </section>
+
+    <div class="drawer-divider"></div>
+
+    <section class="existing-section" aria-labelledby="existing-title">
+      <h3 id="existing-title" class="sr-only">Tareas existentes</h3>
+
+      <div class="drawer-search-row">
+        <div class="drawer-search">
+          <app-icon name="search" />
+          <input
+            aria-label="Buscar tareas existentes"
+            placeholder="Buscar tareas..."
+            [value]="search()"
+            (input)="search.set($any($event.target).value)"
+          />
+          @if (search()) {
+            <button type="button" aria-label="Limpiar búsqueda" (click)="clearSearch()">×</button>
+          }
+        </div>
+        <span class="task-count" [attr.aria-label]="'Tareas encontradas: ' + filteredTasks().length">{{ filteredTasks().length }}</span>
+      </div>
+
+      <p-select
+        [options]="categoryOptions"
+        optionLabel="label"
+        optionValue="value"
+        appendTo="body"
+        panelStyleClass="task-select-panel"
+        [ngModel]="category()"
+        (ngModelChange)="category.set($event)"
+        aria-label="Filtrar por categoría"
+        styleClass="drawer-category-filter"
+      />
+
+      @if (filteredTasks().length) {
+        <div class="drawer-task-list">
+          @for (task of filteredTasks(); track task.id) {
+            <article class="drawer-task-card">
+              <div class="drawer-task-content">
+                <div class="drawer-task-meta">
+                  <span class="category-dot" [class]="task.category.toLowerCase()"></span>
+                  <span>{{ task.category }}</span>
+                  <span class="meta-separator">·</span>
+                  <span>{{ task.priority }}</span>
+                </div>
+                <strong>{{ task.title }}</strong>
+                <small>Creada {{ task.createdAt }}</small>
+              </div>
+              <button class="drawer-delete" type="button" aria-label="Eliminar tarea" title="Eliminar tarea" (click)="taskDeleted.emit(task.id)">×</button>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="drawer-empty">
+          <app-icon name="list" />
+          <strong>{{ search() || category() !== 'All' ? 'No hay coincidencias' : 'No hay tareas todavía' }}</strong>
+          <p>{{ search() || category() !== 'All' ? 'Prueba con otro filtro.' : 'Las tareas creadas aparecerán aquí.' }}</p>
+        </div>
+      }
+
+      <p class="drawer-footer">Mostrando {{ filteredTasks().length }} tarea{{ filteredTasks().length === 1 ? '' : 's' }}</p>
+    </section>
+  </div>
+</aside>

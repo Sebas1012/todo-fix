@@ -1,0 +1,15 @@
+<nav class="sidebar-navigation" aria-label="Navegación principal">
+  @for (item of items; track item.label) {
+    @if (item.enabled && item.route) {
+      <a class="nav-item" [class.active]="item.active" [routerLink]="item.route">
+        <app-icon [name]="item.icon" />
+        <span>{{ item.label }}</span>
+      </a>
+    } @else {
+      <span class="nav-item nav-item-disabled" aria-disabled="true">
+        <app-icon [name]="item.icon" />
+        <span>{{ item.label }}</span>
+      </span>
+    }
+  }
+</nav>

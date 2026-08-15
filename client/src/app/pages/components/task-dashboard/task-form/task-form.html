@@ -1,7 +1,0 @@
-<form class="flex flex-wrap gap-2.5" (ngSubmit)="submit()">
-  <label class="sr-only" for="task-title">Task title</label>
-  <input class="h-11 min-w-[180px] flex-[1_1_240px] rounded-[11px] border border-slate-200 bg-white px-[13px] text-sm text-slate-600 outline-none transition focus:border-teal-400 focus:ring-4 focus:ring-teal-100" id="task-title" name="title" [ngModel]="title()" (ngModelChange)="title.set($event)" placeholder="Add a new task..." autocomplete="off" />
-  <p-select [options]="categories" [(ngModel)]="category" name="category" aria-label="Task category" class="w-[135px] shrink-0" />
-  <p-select [options]="priorities" [(ngModel)]="priority" name="priority" aria-label="Task priority" class="w-[135px] shrink-0" />
-  <button class="h-11 rounded-[11px] bg-gradient-to-br from-teal-400 to-teal-600 px-[19px] font-semibold text-white shadow-lg shadow-teal-600/15 transition hover:brightness-95" type="submit">＋ Add task</button>
-</form>

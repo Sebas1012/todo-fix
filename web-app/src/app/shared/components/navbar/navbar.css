@@ -1,0 +1,6 @@
+:host { display: block; }
+.sidebar-navigation { display: grid; }
+.nav-item { display: flex; align-items: center; gap: 14px; width: 100%; padding: 13px 18px; margin-bottom: 5px; border-radius: 12px; color: #526970; font-size: 14px; text-decoration: none; }
+.nav-item.active, .nav-item:not(.nav-item-disabled):hover { background: var(--mint-soft); color: var(--mint-dark); font-weight: 600; }
+.nav-item-disabled { color: #9aa8ac; cursor: default; opacity: .65; pointer-events: none; user-select: none; }
+.nav-item-disabled:hover { background: transparent; color: #9aa8ac; font-weight: 400; }

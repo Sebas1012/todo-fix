@@ -1,0 +1,8 @@
+.filter-tabs button { cursor: pointer; }
+.filter-tabs button:hover { background: var(--mint-soft); color: var(--mint-dark); }
+.filter-tabs button[aria-selected='true'] { cursor: default; }
+
+@media (max-width: 700px) {
+  .filter-tabs { order: 3; flex-basis: 100%; }
+  .filter-sort { order: 4; flex-basis: 100%; width: min(300px, 100%); }
+}

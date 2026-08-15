@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @import 'primeicons/primeicons.css';
 
-html { height: 100%; overflow: hidden; }
+html { min-height: 100%; overflow-x: hidden; overflow-y: auto; }
 
 :root {
   --page: #f6f8f9;
@@ -22,6 +22,13 @@ html { height: 100%; overflow: hidden; }
 }
 
 * { box-sizing: border-box; }
-body { min-width: 320px; height: 100%; min-height: 100dvh; margin: 0; overflow: hidden; background: var(--page); }
+body { min-width: 320px; min-height: 100dvh; margin: 0; overflow-x: hidden; overflow-y: auto; background: var(--page); }
 button, input, select { font: inherit; }
 .task-select-panel { z-index: 1000 !important; }
+.mobile-user-menu { position: fixed; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 30; display: grid; min-width: min(270px, calc(100vw - 24px)); max-width: calc(100vw - 24px); gap: 4px; padding: 16px; border: 1px solid #e3eeee; border-radius: 16px; background: #fff; box-shadow: 0 12px 35px rgba(20, 55, 60, .16); }
+.mobile-user-avatar { display: grid; width: 38px; height: 38px; margin-bottom: 4px; place-items: center; border-radius: 50%; background: var(--mint); color: #fff; font-size: 13px; font-weight: 700; }
+.mobile-user-menu strong, .mobile-user-menu small { display: block; min-width: 0; }
+.mobile-user-menu strong { color: var(--ink); font-size: 14px; line-height: 1.35; }
+.mobile-user-menu small { overflow: hidden; color: var(--muted); font-size: 11px; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+.mobile-logout-button { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 10px 0 0; border: 0; border-top: 1px solid #edf1f2; background: transparent; color: #d94b36; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+.mobile-logout-button app-icon { width: 18px; height: 18px; }

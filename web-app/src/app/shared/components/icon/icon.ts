@@ -20,7 +20,8 @@ export type IconName =
   | 'check'
   | 'alert-circle'
   | 'alert-triangle'
-  | 'logout';
+  | 'logout'
+  | 'user';
 
 @Component({
   selector: 'app-icon',

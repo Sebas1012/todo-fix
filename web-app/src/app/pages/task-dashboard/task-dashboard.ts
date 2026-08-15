@@ -23,6 +23,7 @@ export class TaskDashboard implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   readonly isFormOpen = signal(false);
+  readonly isUserMenuOpen = signal(false);
   readonly filters = signal<TaskFilterState>({ category: 'All', status: 'Todos', search: '', sort: 'Fecha de creación' });
   readonly tasks = this.taskService.tasks;
   readonly loading = this.taskService.loading;
@@ -57,7 +58,11 @@ export class TaskDashboard implements OnInit {
   addTask(input: Parameters<TaskService['addTask']>[0]): void { void this.taskService.addTask(input); }
   toggleTask(id: string): void { void this.taskService.toggleTask(id); }
   deleteTask(id: string): void { void this.taskService.deleteTask(id); }
-  async logout(): Promise<void> { await this.authService.logout(); await this.router.navigateByUrl('/login'); }
+  async logout(): Promise<void> {
+    this.isUserMenuOpen.set(false);
+    await this.authService.logout();
+    await this.router.navigateByUrl('/login');
+  }
   updateFilters(next: TaskFilterState): void { this.filters.set(next); }
 
   setStatus(status: TaskStatus): void { this.updateFilters({ ...this.filters(), status }); }

@@ -3,9 +3,6 @@
     <a class="brand" href="/tasks" aria-label="Inicio de tareas Iris CF">
       <img src="https://empresas.iris.com.co/login/assets/img/logos/Logo-Iris.svg" width="158" height="64" alt="Iris CF" />
     </a>
-    <div class="mobile-topbar-controls">
-      <button class="mobile-add-task" type="button" (click)="isFormOpen.update((open) => !open)">Crear tarea</button>
-    </div>
   </header>
 
   <div class="layout">
@@ -97,9 +94,29 @@
 
   <nav class="mobile-bottom-nav" aria-label="Navegación móvil">
     <a class="active" href="/tasks"><app-icon name="grid" /><span>Panel</span></a>
-    <a href="/tasks"><app-icon name="check-circle" /><span>Mis tareas</span></a>
     <span class="mobile-nav-disabled" aria-disabled="true"><app-icon name="calendar" /><span>Calendario</span></span>
     <span class="mobile-nav-disabled" aria-disabled="true"><app-icon name="chart" /><span>Reportes</span></span>
-    <span class="mobile-nav-disabled" aria-disabled="true"><app-icon name="settings" /><span>Configuración</span></span>
+    <button
+      class="mobile-user-nav"
+      type="button"
+      aria-haspopup="dialog"
+      aria-controls="mobile-user-menu"
+      [attr.aria-expanded]="isUserMenuOpen()"
+      (click)="isUserMenuOpen.update((open) => !open)"
+    >
+      <app-icon name="user" />
+      <span>Usuario</span>
+    </button>
+    @if (isUserMenuOpen()) {
+      <section id="mobile-user-menu" class="mobile-user-menu" role="dialog" aria-label="Datos de usuario">
+        <span class="mobile-user-avatar">{{ userInitials() }}</span>
+        <strong>{{ currentUser()?.fullName ?? 'Usuario' }}</strong>
+        <small>{{ currentUser()?.email ?? '' }}</small>
+        <button class="mobile-logout-button" type="button" (click)="logout()">
+          <app-icon name="logout" />
+          Cerrar sesión
+        </button>
+      </section>
+    }
   </nav>
 </div>

@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import * as helmetModule from 'helmet';
+import helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
 import { apiReference } from '@scalar/express-api-reference';
 import { env } from './config/env.js';
@@ -18,7 +18,6 @@ import { taskRouter } from './modules/tasks/interfaces/routes/task.routes.js';
 import { AppError } from './shared/errors.js';
 import { validationError } from './interfaces/http/middleware/error-handler.js';
 import { openApiDocument } from '../openapi.js';
-const helmet = helmetModule.default;
 export const createApp = () => {
     const app = express();
     const users = new PrismaUserRepository();

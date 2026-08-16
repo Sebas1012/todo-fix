@@ -48,7 +48,7 @@ Thumbs.db
 !.env.example
 
 # Backend artifacts
-/api/dist
+# /api/dist se commitea a propósito: Vercel sirve el build, no compila.
 /api/coverage
 /api/node_modules
 /api/prisma/generated

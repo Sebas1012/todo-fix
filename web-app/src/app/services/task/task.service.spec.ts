@@ -1,7 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
 import { TaskService } from './task.service';
+import { AlertService } from '../../shared/services/alert.service';
 
 const task = {
   id: 'task-1',
@@ -16,9 +18,12 @@ const task = {
 describe('TaskService', () => {
   let service: TaskService;
   let http: HttpTestingController;
+  const alerts = { success: vi.fn(), error: vi.fn() };
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    alerts.success.mockReset();
+    alerts.error.mockReset();
+    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), { provide: AlertService, useValue: alerts }] });
     service = TestBed.inject(TaskService);
     http = TestBed.inject(HttpTestingController);
   });
@@ -62,5 +67,51 @@ describe('TaskService', () => {
   it('does not create empty task titles', async () => {
     await service.addTask({ title: '   ', category: 'Docs', priority: 'Baja' });
     expect(service.tasks()).toEqual([]);
+  });
+
+  it('prevents toggling an unknown or already toggling task', async () => {
+    await service.toggleTask('missing');
+    expect(http.match(() => true)).toHaveLength(0);
+
+    const create = service.addTask({ title: 'Create API', category: 'BackEnd', priority: 'Urgente' });
+    http.expectOne({ method: 'POST', url: 'http://localhost:3000/api/tasks' }).flush({ data: task });
+    await create;
+
+    const first = service.toggleTask(task.id);
+    const second = service.toggleTask(task.id);
+    expect(service.togglingTaskIds().has(task.id)).toBe(true);
+    const requests = http.match({ method: 'PATCH', url: 'http://localhost:3000/api/tasks/task-1' });
+    expect(requests).toHaveLength(1);
+    requests[0].flush({ data: { ...task, completed: true } });
+    await Promise.all([first, second]);
+    expect(service.togglingTaskIds().has(task.id)).toBe(false);
+  });
+
+  it('maps API errors and clears loading after a failed load', async () => {
+    const load = service.loadTasks();
+    http.expectOne({ method: 'GET', url: 'http://localhost:3000/api/tasks?page=1&limit=100' }).flush({}, { status: 500, statusText: 'Server Error' });
+    await load;
+    expect(service.loading()).toBe(false);
+    expect(service.error()).toBe('Ocurrió un error interno en el servidor.');
+    expect(alerts.error).toHaveBeenCalled();
+  });
+
+  it('maps validation, not found, connection and server messages', async () => {
+    const cases = [
+      { status: 400, message: 'Los datos enviados no son válidos.' },
+      { status: 404, message: 'La tarea solicitada no fue encontrada.' },
+      { status: 0, message: 'No fue posible conectar con el servidor.' },
+    ];
+    for (const item of cases) {
+      const remove = service.deleteTask('task-1');
+      http.expectOne({ method: 'DELETE', url: 'http://localhost:3000/api/tasks/task-1' }).flush({}, { status: item.status, statusText: 'Error' });
+      await remove;
+      expect(service.error()).toBe(item.message);
+    }
+
+    const create = service.addTask({ title: 'Task', category: 'Docs', priority: 'Baja' });
+    http.expectOne({ method: 'POST', url: 'http://localhost:3000/api/tasks' }).flush({ message: 'Custom server message' }, { status: 409, statusText: 'Conflict' });
+    await create;
+    expect(service.error()).toBe('Custom server message');
   });
 });

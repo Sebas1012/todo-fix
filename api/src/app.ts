@@ -27,13 +27,24 @@ export const createApp = () => {
   const register = new RegisterUser(users, passwords, tokens);
   const login = new LoginUser(users, passwords, tokens);
   const getCurrentUser = new GetCurrentUser(users);
-  app.use(helmet());
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    contentSecurityPolicy: {
+      directives: {
+        'script-src': [
+          "'self'",
+          'https://cdn.jsdelivr.net',
+          "'sha256-rzwAAbtXKA0k5x2VFQzcawESvfwM+IxfW8NBGTfYOcE='",
+        ],
+      },
+    },
+  }));
   app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
   app.use(express.json({ limit: '10kb' }));
   app.use(rateLimit({ windowMs: 15 * 60 * 1000, limit: 100 }));
   app.get('/health', (_req, res) => res.json({ status: 'ok' }));
   app.get('/openapi.json', (_req, res) => res.json(openApiDocument));
-  app.use('/docs', apiReference({ spec: { content: openApiDocument } }));
+  app.use('/docs', apiReference({ url: '/openapi.json' }));
   const taskRepository = new PrismaTaskRepository();
   const taskController = new TaskController(
     new CreateTask(taskRepository),

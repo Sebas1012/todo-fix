@@ -13,7 +13,7 @@ Frontend de la prueba técnica de IRIS construido con Angular 22, componentes st
 - Métricas de total, completadas, pendientes y progreso.
 - Contratos, mapper y servicios preparados para la API REST.
 
-La API local utiliza `http://localhost:3000/api`. El login se implementará después; durante el desarrollo puede utilizarse el bypass controlado del API.
+La API local utiliza `http://localhost:3000/api`. La autenticación usa una cookie `HttpOnly`; las peticiones del frontend se envían con `withCredentials: true`.
 
 ## Estructura
 
@@ -39,8 +39,9 @@ Abrir `http://localhost:4200/tasks`.
 ## Build y pruebas
 
 ```bash
-pnpm run build
-pnpm test -- --watch=false
+pnpm build
+pnpm test
+pnpm test:coverage
 ```
 
 ## Environments

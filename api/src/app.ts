@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
+import { rateLimit } from 'express-rate-limit';
 import { apiReference } from '@scalar/express-api-reference';
 import { env } from './config/env.js';
 import { GetCurrentUser, LoginUser, RegisterUser } from './modules/auth/application/auth.js';
